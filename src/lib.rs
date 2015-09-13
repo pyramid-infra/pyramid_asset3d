@@ -1,16 +1,21 @@
 #![feature(convert)]
 #[macro_use]
 extern crate pyramid;
-extern crate asset3d_to_pml;
 extern crate ppromise;
 extern crate time;
+extern crate assimp;
+extern crate pyramid_animation;
+extern crate cgmath;
+extern crate mesh;
+
+mod assimp_asset;
 
 use ppromise::*;
 use pyramid::document::*;
 use pyramid::pon::*;
 use pyramid::interface::*;
 use pyramid::system::*;
-use asset3d_to_pml::*;
+use assimp_asset::*;
 
 use std::collections::HashMap;
 use std::collections::hash_map::Entry;
@@ -57,7 +62,7 @@ pub struct SubdocSubSystem {
 
 impl SubdocSubSystem {
     pub fn new(root_path: PathBuf) -> SubdocSubSystem {
-        ::asset3d_to_pml::init_logging();
+        ::assimp_asset::init_logging();
         SubdocSubSystem {
             root_path: root_path,
             assets: HashMap::new(),
