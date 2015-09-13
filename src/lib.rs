@@ -49,16 +49,16 @@ impl Asset {
     }
 }
 
-pub struct Asset3dSubSystem {
+pub struct SubdocSubSystem {
     root_path: PathBuf,
     assets: HashMap<Pon, Asset>,
     async_runner: AsyncRunner
 }
 
-impl Asset3dSubSystem {
-    pub fn new(root_path: PathBuf) -> Asset3dSubSystem {
+impl SubdocSubSystem {
+    pub fn new(root_path: PathBuf) -> SubdocSubSystem {
         ::asset3d_to_pml::init_logging();
-        Asset3dSubSystem {
+        SubdocSubSystem {
             root_path: root_path,
             assets: HashMap::new(),
             async_runner: AsyncRunner::new_pooled(4)
@@ -66,7 +66,7 @@ impl Asset3dSubSystem {
     }
 }
 
-impl ISubSystem for Asset3dSubSystem {
+impl ISubSystem for SubdocSubSystem {
     fn on_property_value_change(&mut self, system: &mut System, prop_refs: &Vec<PropRef>) {
         let document = system.document_mut();
         for pr in prop_refs.iter().filter(|pr| pr.property_key == "directx_x") {
