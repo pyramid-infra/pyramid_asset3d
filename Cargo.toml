@@ -1,0 +1,16 @@
+[package]
+name = "pyramid_asset3d"
+version = "0.1.0"
+authors = ["Fredrik Noren <fredrik.jw.noren@gmail.com>"]
+
+[dependencies]
+time = "*"
+
+[dependencies.pyramid]
+path = "../pyramid"
+
+[dependencies.ppromise]
+path = "../ppromise"
+
+[dependencies.asset3d_to_pml]
+path = "../asset3d_to_pml"
