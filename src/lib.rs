@@ -69,9 +69,9 @@ impl SubdocSubSystem {
 impl ISubSystem for SubdocSubSystem {
     fn on_property_value_change(&mut self, system: &mut System, prop_refs: &Vec<PropRef>) {
         let document = system.document_mut();
-        for pr in prop_refs.iter().filter(|pr| pr.property_key == "directx_x") {
+        for pr in prop_refs.iter().filter(|pr| pr.property_key == "subdoc") {
             let pn = document.get_property_value(&pr.entity_id, &pr.property_key.as_str()).unwrap().clone();
-            match document.get_property_value(&pr.entity_id, "scene_loaded") {
+            match document.get_property_value(&pr.entity_id, "subdoc_loaded") {
                 Ok(_) => {
                     println!("WARNING: Trying to change .x file on entity that's already been assigned a .x file once {:?}, skipping.", pr);
                     continue;
@@ -89,7 +89,7 @@ impl ISubSystem for SubdocSubSystem {
                     v.insert(file).append_to_entity(document, &pr.entity_id);
                 }
             }
-            document.set_property(&pr.entity_id, "scene_loaded", pn.clone()).unwrap();
+            document.set_property(&pr.entity_id, "subdoc_loaded", pn.clone()).unwrap();
         }
     }
     fn update(&mut self, system: &mut System) {
