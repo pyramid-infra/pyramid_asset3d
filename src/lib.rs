@@ -24,8 +24,8 @@ struct Asset {
 }
 
 impl Asset {
-    fn new(async_runner: &AsyncRunner, root_path: PathBuf, pon: Pon) -> Asset {
-        let filename = pon.translate::<&str>().unwrap();
+    fn new(async_runner: &AsyncRunner, root_path: PathBuf, pon: Pon, context: &mut TranslateContext) -> Asset {
+        let filename = pon.translate::<&str>(context).unwrap();
         let path_buff = root_path.join(Path::new(filename));
         let path = path_buff.as_path();
         Asset {
@@ -84,7 +84,7 @@ impl ISubSystem for Asset3dSubSystem {
                     o.into_mut().append_to_entity(document, &pr.entity_id)
                 },
                 Entry::Vacant(v) => {
-                    let file = Asset::new(&self.async_runner, self.root_path.clone(), pn.clone());
+                    let file = Asset::new(&self.async_runner, self.root_path.clone(), pn.clone(), &mut TranslateContext::from_doc(document));
                     file.asset.value().unwrap().add_resources_to_document(document);
                     v.insert(file).append_to_entity(document, &pr.entity_id);
                 }
