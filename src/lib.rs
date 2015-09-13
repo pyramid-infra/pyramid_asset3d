@@ -57,6 +57,7 @@ pub struct Asset3dSubSystem {
 
 impl Asset3dSubSystem {
     pub fn new(root_path: PathBuf) -> Asset3dSubSystem {
+        ::asset3d_to_pml::init_logging();
         Asset3dSubSystem {
             root_path: root_path,
             assets: HashMap::new(),
