@@ -196,12 +196,16 @@ impl Asset3d {
 
 #[test]
 fn test() {
-    let asset = Asset3d::from_file(&Path::new("../examples/assets/DeadMeetsLeadContent/Data/Models/Props/Palmtree1.x"));
+    let asset = Asset3d::from_file(&Path::new("test_assets/Palmtree1.x"));
     let mut doc = Document::new();
     asset.add_resources_to_document(&mut doc);
     asset.append_to_document(&mut doc, None);
-    println!("{}", doc.to_string());
-    assert_eq!("5", "");
+    let polySurface3 = doc.get_entity_by_name("polySurface3").unwrap();
+    assert_eq!(
+        doc.get_property_value(&polySurface3, "scale").unwrap().translate::<cgmath::Vector3<f32>>(&mut TranslateContext::from_doc(&mut doc)).unwrap(),
+        cgmath::Vector3::new(1.0, 1.0, 1.0));
+    // println!("{}", doc.to_string());
+    // assert_eq!("5", "");
 }
 
 fn mat_into(mat: Matrix4x4) -> cgmath::Matrix4<f32> {
