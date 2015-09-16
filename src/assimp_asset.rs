@@ -90,7 +90,7 @@ impl Asset3d {
         document.set_property(&entity_id, "scale", Pon::Vector3(cgmath::Vector3::new(1.0, 1.0, 1.0))).unwrap();
 
         let local_transform: cgmath::Matrix4<f32> = mat_into(node.transformation());
-        document.set_property(&entity_id, "local_transform", local_transform.to_pon()).unwrap();
+        document.set_property(&entity_id, "local_transform", Pon::Matrix4(local_transform)).unwrap();
         let mut transforms = vec![];
 
         transforms.push(Pon::DependencyReference(NamedPropRef::new(EntityPath::Parent, "transform"), None));
@@ -141,6 +141,8 @@ impl Asset3d {
         };
         for i in 0..aianim.num_channels {
             let ainodeanim = aianim.get_node_anim(i as usize).unwrap();
+            let duration = Duration::milliseconds((aianim.duration * 1000.0 / aianim.ticks_per_second) as i64);
+            let duration_sec = duration.num_milliseconds() as f32 / 1000.0;
 
             let mut position_keys = vec![];
             for l in 0..ainodeanim.num_position_keys {
@@ -150,11 +152,11 @@ impl Asset3d {
             track_set.tracks.push(Box::new(pa::CurveTrack {
                 curve: Box::new(pa::LinearKeyFrameCurve {
                     keys: position_keys
-                }),
+                }.to_discreet((duration_sec * 60.0) as usize, duration_sec)),
                 offset: Duration::zero(),
                 property: NamedPropRef::new(EntityPath::Search(Box::new(EntityPath::This), ainodeanim.node_name.as_ref().to_string()), "translation"),
                 loop_type: pa::Loop::Forever,
-                duration: Duration::milliseconds((aianim.duration * 1000.0 / aianim.ticks_per_second) as i64),
+                duration: duration.clone(),
                 curve_time: pa::CurveTime::Absolute
             }));
 
@@ -166,11 +168,11 @@ impl Asset3d {
             track_set.tracks.push(Box::new(pa::CurveTrack {
                 curve: Box::new(pa::LinearKeyFrameCurve {
                     keys: rotation_keys
-                }),
+                }.to_discreet((duration_sec * 60.0) as usize, duration_sec)),
                 offset: Duration::zero(),
                 property: NamedPropRef::new(EntityPath::Search(Box::new(EntityPath::This), ainodeanim.node_name.as_ref().to_string()), "rotation"),
                 loop_type: pa::Loop::Forever,
-                duration: Duration::milliseconds((aianim.duration * 1000.0 / aianim.ticks_per_second) as i64),
+                duration: duration,
                 curve_time: pa::CurveTime::Absolute
             }));
 
@@ -182,11 +184,11 @@ impl Asset3d {
             track_set.tracks.push(Box::new(pa::CurveTrack {
                 curve: Box::new(pa::LinearKeyFrameCurve {
                     keys: scale_keys
-                }),
+                }.to_discreet((duration_sec * 60.0) as usize, duration_sec)),
                 offset: Duration::zero(),
                 property: NamedPropRef::new(EntityPath::Search(Box::new(EntityPath::This), ainodeanim.node_name.as_ref().to_string()), "scale"),
                 loop_type: pa::Loop::Forever,
-                duration: Duration::milliseconds((aianim.duration * 1000.0 / aianim.ticks_per_second) as i64),
+                duration: duration,
                 curve_time: pa::CurveTime::Absolute
             }));
         }
