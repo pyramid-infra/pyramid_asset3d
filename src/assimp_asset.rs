@@ -84,7 +84,7 @@ impl Asset3d {
     }
     fn append_node_to_entity(&self, node: Node, mut document: &mut Document, parent_id: EntityId) {
         let entity_id = document.append_entity(Some(parent_id), "Entity", Some(node.name().to_string())).unwrap();
-        document.set_property(&entity_id, "diffuse", Pon::DependencyReference(NamedPropRef::new(EntityPath::Parent, "diffuse"))).unwrap();
+        document.set_property(&entity_id, "diffuse", Pon::DependencyReference(NamedPropRef::new(EntityPath::Parent, "diffuse"), None)).unwrap();
         document.set_property(&entity_id, "translation", Pon::Vector3(cgmath::Vector3::new(0.0, 0.0, 0.0))).unwrap();
         document.set_property(&entity_id, "rotation", Pon::Vector4(cgmath::Vector4::new(0.0, 0.0, 0.0, 1.0))).unwrap();
         document.set_property(&entity_id, "scale", Pon::Vector3(cgmath::Vector3::new(1.0, 1.0, 1.0))).unwrap();
@@ -93,17 +93,17 @@ impl Asset3d {
         document.set_property(&entity_id, "local_transform", local_transform.to_pon()).unwrap();
         let mut transforms = vec![];
 
-        transforms.push(Pon::DependencyReference(NamedPropRef::new(EntityPath::Parent, "transform")));
-        transforms.push(Pon::DependencyReference(NamedPropRef::new(EntityPath::This, "local_transform")));
-        transforms.push(Pon::new_typed_pon("translate", Pon::DependencyReference(NamedPropRef::new(EntityPath::This, "translation"))));
-        transforms.push(Pon::new_typed_pon("rotate_quaternion", Pon::DependencyReference(NamedPropRef::new(EntityPath::This, "rotation"))));
-        transforms.push(Pon::new_typed_pon("scale", Pon::DependencyReference(NamedPropRef::new(EntityPath::This, "scale"))));
+        transforms.push(Pon::DependencyReference(NamedPropRef::new(EntityPath::Parent, "transform"), None));
+        transforms.push(Pon::DependencyReference(NamedPropRef::new(EntityPath::This, "local_transform"), None));
+        transforms.push(Pon::new_typed_pon("translate", Pon::DependencyReference(NamedPropRef::new(EntityPath::This, "translation"), None)));
+        transforms.push(Pon::new_typed_pon("rotate_quaternion", Pon::DependencyReference(NamedPropRef::new(EntityPath::This, "rotation"), None)));
+        transforms.push(Pon::new_typed_pon("scale", Pon::DependencyReference(NamedPropRef::new(EntityPath::This, "scale"), None)));
 
         document.set_property(&entity_id, "transform", Pon::new_typed_pon("mul", Pon::Array(transforms))).unwrap();
 
-        document.set_property(&entity_id, "shader", Pon::DependencyReference(NamedPropRef::new(EntityPath::Parent, "shader"))).unwrap();
-        document.set_property(&entity_id, "uniforms", Pon::DependencyReference(NamedPropRef::new(EntityPath::Parent, "uniforms"))).unwrap();
-        document.set_property(&entity_id, "alpha", Pon::DependencyReference(NamedPropRef::new(EntityPath::Parent, "alpha"))).unwrap();
+        document.set_property(&entity_id, "shader", Pon::DependencyReference(NamedPropRef::new(EntityPath::Parent, "shader"), None)).unwrap();
+        document.set_property(&entity_id, "uniforms", Pon::DependencyReference(NamedPropRef::new(EntityPath::Parent, "uniforms"), None)).unwrap();
+        document.set_property(&entity_id, "alpha", Pon::DependencyReference(NamedPropRef::new(EntityPath::Parent, "alpha"), None)).unwrap();
 
         for mesh_id in node.meshes() {
             document.set_property(&entity_id, "mesh", Pon::new_typed_pon("mesh_from_resource", Pon::String(self.get_mesh_key(*mesh_id as usize)))).unwrap();
@@ -202,7 +202,7 @@ fn test() {
     asset.append_to_document(&mut doc, None);
     let polySurface3 = doc.get_entity_by_name("polySurface3").unwrap();
     assert_eq!(
-        doc.get_property_value(&polySurface3, "scale").unwrap().translate::<cgmath::Vector3<f32>>(&mut TranslateContext::from_doc(&mut doc)).unwrap(),
+        doc.get_property(&polySurface3, "scale").unwrap().translate::<cgmath::Vector3<f32>>(&mut TranslateContext::empty()).unwrap(),
         cgmath::Vector3::new(1.0, 1.0, 1.0));
     // println!("{}", doc.to_string());
     // assert_eq!("5", "");
