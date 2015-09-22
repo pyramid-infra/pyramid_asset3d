@@ -30,8 +30,8 @@ struct Asset {
 
 impl Asset {
     fn new(async_runner: &AsyncRunner, root_path: PathBuf, pon: Pon, context: &mut TranslateContext) -> Asset {
-        let filename = pon.translate::<&str>(context).unwrap();
-        let path_buff = root_path.join(Path::new(filename));
+        let filename = pon.translate::<String>(context).unwrap();
+        let path_buff = root_path.join(Path::new(&filename));
         let path = path_buff.as_path();
         Asset {
             asset: Promise::resolved(Asset3d::from_file(&path)),
@@ -75,8 +75,8 @@ impl ISubSystem for SubdocSubSystem {
     fn on_property_value_change(&mut self, system: &mut System, prop_refs: &Vec<PropRef>) {
         let document = system.document_mut();
         for pr in prop_refs.iter().filter(|pr| pr.property_key == "subdoc") {
-            let pn = document.get_property_value(&pr.entity_id, &pr.property_key.as_str()).unwrap().clone();
-            match document.get_property_value(&pr.entity_id, "subdoc_loaded") {
+            let pn = document.get_property(&pr.entity_id, &pr.property_key.as_str()).unwrap().clone();
+            match document.get_property(&pr.entity_id, "subdoc_loaded") {
                 Ok(_) => {
                     println!("WARNING: Trying to change .x file on entity that's already been assigned a .x file once {:?}, skipping.", pr);
                     continue;
@@ -84,7 +84,7 @@ impl ISubSystem for SubdocSubSystem {
                 Err(_) => {}
             }
 
-            match self.assets.entry(pn.clone()) {
+            match self.assets.entry(pn.concretize().unwrap().clone()) {
                 Entry::Occupied(o) => {
                     o.into_mut().append_to_entity(document, &pr.entity_id)
                 },
