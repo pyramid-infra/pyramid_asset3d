@@ -157,7 +157,7 @@ impl Asset3d {
                 property: NamedPropRef::new(EntityPath::Search(Box::new(EntityPath::This), ainodeanim.node_name.as_ref().to_string()), "translation"),
                 loop_type: pa::Loop::Forever,
                 duration: duration.clone(),
-                curve_time: pa::CurveTime::Absolute
+                curve_time: pa::CurveTime::Relative
             }));
 
             let mut rotation_keys = vec![];
@@ -173,7 +173,7 @@ impl Asset3d {
                 property: NamedPropRef::new(EntityPath::Search(Box::new(EntityPath::This), ainodeanim.node_name.as_ref().to_string()), "rotation"),
                 loop_type: pa::Loop::Forever,
                 duration: duration,
-                curve_time: pa::CurveTime::Absolute
+                curve_time: pa::CurveTime::Relative
             }));
 
             let mut scale_keys = vec![];
@@ -189,7 +189,7 @@ impl Asset3d {
                 property: NamedPropRef::new(EntityPath::Search(Box::new(EntityPath::This), ainodeanim.node_name.as_ref().to_string()), "scale"),
                 loop_type: pa::Loop::Forever,
                 duration: duration,
-                curve_time: pa::CurveTime::Absolute
+                curve_time: pa::CurveTime::Relative
             }));
         }
         track_set
